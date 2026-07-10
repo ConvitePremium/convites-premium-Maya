@@ -16,12 +16,12 @@
    "hotspots" aqui embaixo.
    ========================================================================== */
 
-const CONFIG = {
+window.CONFIG = {
 
   // ----- IDENTIDADE DO CONVITE -------------------------------------------
   // Nome do aniversariante. Aparece no título da aba do navegador e nos
   // textos automáticos do convite.
-  nome: "Sophia",
+  nome: "Maya",
 
   // ----- WHATSAPP (CONFIRMAR PRESENÇA) -----------------------------------
   // numero: DDI + DDD + número, SÓ DÍGITOS (sem +, espaço, parênteses ou traço).
