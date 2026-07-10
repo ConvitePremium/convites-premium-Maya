@@ -72,9 +72,9 @@ const CONFIG = {
   //   left/top: canto superior esquerdo do botão
   //   width/height: tamanho do botão
   hotspots: {
-    confirm: { left: 18.5, top: 68.8, width: 20.5, height: 11.2 },  // WhatsApp
-    map:     { left: 39.5, top: 68.8, width: 20.5, height: 11.2 },  // Localização
-    gift:    { left: 60.5, top: 68.8, width: 23.0, height: 11.2 }   // Presentes
+      confirm: { left:15, top:83.4929833917626, width:20.5, height:11.2 },
+      map: { left:40.66898233222849, top:83.60262665317134, width:20.5, height:11.2 },
+      gift: { left:64.2017749079874, top:84.91842944571364, width:23, height:11.2 }
   },
 
   // ----- MÚSICA DE FUNDO -------------------------------------------------
