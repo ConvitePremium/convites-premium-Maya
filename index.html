@@ -61,7 +61,23 @@
     body.editor-on .hotspot::after{content:attr(data-label);position:absolute;left:6px;top:6px;background:#fff;color:#7b3650;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px #0004;white-space:nowrap}
     body.editor-on .hotspot.selected{background:rgba(50,180,255,.28);outline:3px solid #fff}
     body.editor-on .hotspot .resize{position:absolute;right:-7px;bottom:-7px;width:18px;height:18px;background:#fff;border:2px solid #7b3650;border-radius:50%;box-shadow:0 2px 8px #0006}
-    .editor-panel{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:50;max-width:560px;margin:auto;background:rgba(255,255,255,.94);color:#4b2634;border-radius:18px;padding:12px;box-shadow:0 12px 34px #0006;font-size:13px}
+    .editor-panel{
+  display:none;
+  position:fixed;
+  left:12px;
+  right:12px;
+  top:12px;
+  bottom:auto;
+  z-index:50;
+  max-width:560px;
+  margin:auto;
+  background:rgba(255,255,255,.94);
+  color:#4b2634;
+  border-radius:18px;
+  padding:12px;
+  box-shadow:0 12px 34px #0006;
+  font-size:13px;
+}
     body.editor-on .editor-panel{display:block}.editor-panel b{font-size:14px}.editor-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.editor-panel button,.editor-panel select,.editor-panel input{border:1px solid #d5a8b7;border-radius:10px;padding:8px;background:#fff;color:#4b2634;font-weight:700}.editor-panel input{width:74px}.editor-panel textarea{width:100%;height:78px;margin-top:8px;border:1px solid #d5a8b7;border-radius:10px;padding:8px;font-size:12px}.editor-mini{opacity:.75;font-size:12px;margin-top:6px}.edit-open{display:none;position:fixed;right:12px;bottom:12px;z-index:45;border:0;border-radius:999px;padding:10px 13px;background:rgba(255,255,255,.88);color:#6b3a21;font-weight:800;box-shadow:0 4px 16px #0004}body.can-edit .edit-open{display:block}body.editor-on .edit-open{display:none}
   </style>
 </head>
