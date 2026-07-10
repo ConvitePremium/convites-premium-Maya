@@ -72,10 +72,10 @@ window.CONFIG = {
   //   left/top: canto superior esquerdo do botão
   //   width/height: tamanho do botão
   hotspots: {
-        confirm: { left:15, top:83.4929833917626, width:20.88965582260389, height:15.037719105617501 },
-        map: { left:39.30515722428124, top:84.15087223968813, width:20.88967068702071, height:14.59912096329132 },
-        gift: { left:64.98108655319517, top:84.15088897081564, width:21.831017667771516, height:15.147374915371866 }
-  },
+        confirm: { left:39.353845658746735, top:81.40964012432231, width:21.2793265096246, height:16.572808420977253 },
+        map: { left:15.340967388138388, top:81.4096443071042, width:20.11034417739611, height:16.463160976786646 },
+        gift: { left:64.00694699668546, top:81.62895592661293, width:22.41551626609417, height:16.35350516703228 }
+  };
 
   // ----- MÚSICA DE FUNDO -------------------------------------------------
   // volume: de 0 (mudo) a 1 (máximo). O padrão 0.30 é agradável e não
