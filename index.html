@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- ====================================================================
+       META TAGS DE PREVIEW (WHATSAPP / FACEBOOK / TWITTER)
+       --------------------------------------------------------------------
+       O crawler que gera o preview do WhatsApp NÃO executa JavaScript,
+       então estas tags não podem vir do config.js — precisam ficar aqui.
+       Edite este bloco APENAS ao trocar o nome do aniversariante ou o
+       link do repositório (URL_BASE abaixo). O resto da engine é automático.
+       ==================================================================== -->
+  <meta name="theme-color" content="#f6c1cd">
+  <title>Convite</title>
+
+  <!-- Cole aqui a URL base do convite publicado no GitHub Pages -->
+  <!-- Ex.: https://convitepremium.github.io/convite-premium-Joao/ -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Convite Sophia">
+  <meta property="og:description" content="Clique para abrir o convite">
+  <meta property="og:url" content="https://convitepremium.github.io/convite-premium-Sophia/">
+  <meta property="og:image" content="https://convitepremium.github.io/convite-premium-Sophia/assets/preview-whatsapp.jpg">
+  <meta property="og:image:secure_url" content="https://convitepremium.github.io/convite-premium-Sophia/assets/preview-whatsapp.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Convite Sophia">
+  <meta name="twitter:description" content="Clique para abrir o convite">
+  <meta name="twitter:image" content="https://convitepremium.github.io/convite-premium-Sophia/assets/preview-whatsapp.jpg">
+  <!-- Fim do bloco de preview -->
+
+  <link rel="preload" href="assets/opening.webp" as="image">
+  <link rel="preload" href="assets/video.mp4" as="video" type="video/mp4">
+  <style>
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+    .screen{position:fixed;inset:0;display:none;background:#000;align-items:center;justify-content:center;overflow:hidden}
+    .screen.active{display:flex}
+    .screen::before{content:"";position:absolute;inset:-24px;background:var(--bg-img) center/cover no-repeat;filter:blur(18px);transform:scale(1.08);opacity:.55}
+    .stage{position:relative;z-index:1;height:100%;max-height:100svh;aspect-ratio:941/1672;max-width:100vw}
+    .art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;z-index:1}
+    #opening{cursor:pointer;--bg-img:url('assets/opening.webp')}
+    #mainScreen{--bg-img:url('assets/principal.webp')}
+    #giftScreen{--bg-img:url('assets/presentes.webp')}
+    #videoScreen{--bg-img:url('assets/principal.webp')}
+    #videoPlayer{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;background:#000}
+    .hotspot{position:absolute;border:0;background:transparent;cursor:pointer;z-index:5}
+    .back{position:absolute;top:calc(env(safe-area-inset-top) + 14px);left:14px;z-index:10;border:0;border-radius:999px;padding:10px 14px;background:var(--back-bg,rgba(255,255,255,.76));color:var(--back-color,#6b3a21);font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.22)}
+    .skip{position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:14px;z-index:10;border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 16px;background:rgba(255,255,255,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.45);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+    .loading{position:absolute;bottom:28px;left:0;right:0;text-align:center;color:#fff;text-shadow:0 2px 8px #000;font-size:14px;opacity:.85}
+    .tap-btn{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:6;border:1px solid rgba(255,255,255,.72);border-radius:999px;padding:12px 22px;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-shadow:0 1px 5px rgba(0,0,0,.55);box-shadow:0 8px 22px rgba(0,0,0,.20);animation:pulse 1.8s ease-in-out infinite}
+    .music-unlock{display:none;position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);z-index:12;border:1px solid rgba(255,255,255,.65);border-radius:999px;padding:11px 18px;background:rgba(255,255,255,.20);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-size:13px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;text-shadow:0 1px 5px rgba(0,0,0,.55);box-shadow:0 8px 22px rgba(0,0,0,.22)}
+    body.need-music #musicUnlock{display:block}
+    .fade-out{animation:fadeOut .75s ease forwards}.fade-in{animation:fadeIn .75s ease forwards}
+    @keyframes pulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.88}50%{transform:translateX(-50%) scale(1.035);opacity:1}}
+    @keyframes fadeOut{to{opacity:0;filter:blur(8px)}}@keyframes fadeIn{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:blur(0)}}
+    body.editor-on .hotspot{background:rgba(255,70,120,.22);outline:2px solid rgba(255,255,255,.9);border-radius:10px}
+    body.editor-on .hotspot::after{content:attr(data-label);position:absolute;left:6px;top:6px;background:#fff;color:#7b3650;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px #0004;white-space:nowrap}
+    body.editor-on .hotspot.selected{background:rgba(50,180,255,.28);outline:3px solid #fff}
+    body.editor-on .hotspot .resize{position:absolute;right:-7px;bottom:-7px;width:18px;height:18px;background:#fff;border:2px solid #7b3650;border-radius:50%;box-shadow:0 2px 8px #0006}
+    .editor-panel{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:50;max-width:560px;margin:auto;background:rgba(255,255,255,.94);color:#4b2634;border-radius:18px;padding:12px;box-shadow:0 12px 34px #0006;font-size:13px}
+    body.editor-on .editor-panel{display:block}.editor-panel b{font-size:14px}.editor-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.editor-panel button,.editor-panel select,.editor-panel input{border:1px solid #d5a8b7;border-radius:10px;padding:8px;background:#fff;color:#4b2634;font-weight:700}.editor-panel input{width:74px}.editor-panel textarea{width:100%;height:78px;margin-top:8px;border:1px solid #d5a8b7;border-radius:10px;padding:8px;font-size:12px}.editor-mini{opacity:.75;font-size:12px;margin-top:6px}.edit-open{display:none;position:fixed;right:12px;bottom:12px;z-index:45;border:0;border-radius:999px;padding:10px 13px;background:rgba(255,255,255,.88);color:#6b3a21;font-weight:800;box-shadow:0 4px 16px #0004}body.can-edit .edit-open{display:block}body.editor-on .edit-open{display:none}
+  </style>
+</head>
+<body>
+  <main>
+    <section id="opening" class="screen active" aria-label="Abrir convite">
+      <div class="stage">
+        <img class="art" src="assets/opening.webp" alt="Clique para abrir o convite" width="941" height="1672">
+        <button class="tap-btn" id="tapBtn" type="button" aria-label="Abrir convite">Toque para abrir</button>
+      </div>
+    </section>
+
+    <section id="videoScreen" class="screen" aria-label="Vídeo do convite">
+      <div class="stage"><video id="videoPlayer" src="assets/video.mp4" preload="metadata" playsinline webkit-playsinline></video></div>
+      <button class="skip" id="skipBtn" type="button">Pular vídeo</button>
+    </section>
+
+    <section id="mainScreen" class="screen" aria-label="Convite principal">
+      <div class="stage" id="mainStage">
+        <img class="art" src="assets/principal.webp" alt="Convite" loading="eager" width="941" height="1672">
+        <button class="hotspot" id="confirmBtn" data-key="confirm" data-label="WhatsApp" aria-label="Confirmar presença"></button>
+        <button class="hotspot" id="mapBtn" data-key="map" data-label="Localização" aria-label="Abrir localização"></button>
+        <button class="hotspot" id="giftBtn" data-key="gift" data-label="Presentes" aria-label="Ver sugestões de presentes"></button>
+        <button class="music-unlock" id="musicUnlock" type="button">Ativar música</button>
+      </div>
+    </section>
+
+    <section id="giftScreen" class="screen" aria-label="Sugestões de presentes">
+      <div class="stage"><img class="art" src="assets/presentes.webp" alt="Sugestões de presentes" loading="lazy" width="941" height="1672"></div>
+      <button class="back" id="backBtn">Voltar</button>
+    </section>
+  </main>
+
+  <button class="edit-open" id="editOpen" type="button">Editar áreas</button>
+  <div class="editor-panel" id="editorPanel">
+    <b>Editor de áreas de clique</b>
+    <div class="editor-mini">Arraste a área no convite. Puxe a bolinha no canto para aumentar/diminuir. Use <b>?editor=1</b> no link para abrir este editor.</div>
+    <div class="editor-row">
+      <select id="areaSelect"><option value="confirm">WhatsApp</option><option value="map">Localização</option><option value="gift">Presentes</option></select>
+      <label>L <input id="inpL" type="number" step="0.1"></label>
+      <label>T <input id="inpT" type="number" step="0.1"></label>
+      <label>W <input id="inpW" type="number" step="0.1"></label>
+      <label>H <input id="inpH" type="number" step="0.1"></label>
+    </div>
+    <div class="editor-row">
+      <button id="saveAreas" type="button">Salvar neste navegador</button>
+      <button id="resetAreas" type="button">Resetar</button>
+      <button id="copyAreas" type="button">Copiar código</button>
+      <button id="closeEditor" type="button">Fechar</button>
+    </div>
+    <textarea id="exportBox" readonly placeholder="Aqui aparece o código para colar no config.js e deixar permanente."></textarea>
+  </div>
+
+  <audio id="music" src="assets/musica.mp3" preload="auto" loop></audio>
+
+  <!-- config.js DEVE carregar antes da engine -->
+  <script src="config.js"></script>
+  <script>
+    /* ========================================================================
+       ENGINE DO CONVITE — lê tudo de config.js. Não edite por convite.
+       ======================================================================== */
+    (function(){
+      const CFG = window.CONFIG || {};
+      const C = {
+        nome: CFG.nome || "Convidado",
+        whatsapp: CFG.whatsapp || { numero: "", mensagem: "Olá!" },
+        mapa: CFG.mapa || "#",
+        telas: Object.assign({ video:true, presentes:true }, CFG.telas || {}),
+        textos: Object.assign(
+          { abrir:"Toque para abrir", pularVideo:"Pular vídeo", voltar:"Voltar", ativarMusica:"Ativar música" },
+          CFG.textos || {}
+        ),
+        tema: Object.assign(
+          { cor:"#f6c1cd", corBotaoVoltar:"rgba(255,255,255,.76)", corTextoBotaoVoltar:"#6b3a21" },
+          CFG.tema || {}
+        ),
+        hotspots: CFG.hotspots || {
+          confirm:{left:18.5,top:68.8,width:20.5,height:11.2},
+          map:{left:39.5,top:68.8,width:20.5,height:11.2},
+          gift:{left:60.5,top:68.8,width:23.0,height:11.2}
+        },
+        musica: Object.assign({ volume:0.30 }, CFG.musica || {})
+      };
+
+      // ---- APLICAÇÃO DO CONFIG NO DOM ------------------------------------
+      document.title = "Convite " + C.nome;
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if(themeMeta) themeMeta.setAttribute("content", C.tema.cor);
+      const root = document.documentElement;
+      root.style.setProperty("--back-bg", C.tema.corBotaoVoltar);
+      root.style.setProperty("--back-color", C.tema.corTextoBotaoVoltar);
+
+      // Textos dos botões
+      const tapBtn = document.getElementById("tapBtn");
+      const skipBtn = document.getElementById("skipBtn");
+      const backBtn = document.getElementById("backBtn");
+      const musicUnlock = document.getElementById("musicUnlock");
+      if(tapBtn) tapBtn.textContent = C.textos.abrir;
+      if(skipBtn) skipBtn.textContent = C.textos.pularVideo;
+      if(backBtn) backBtn.textContent = C.textos.voltar;
+      if(musicUnlock) musicUnlock.textContent = C.textos.ativarMusica;
+
+      // Telas ligáveis/desligáveis
+      const hasVideo = !!C.telas.video;
+      const hasGift = !!C.telas.presentes;
+      const giftBtn = document.getElementById("giftBtn");
+      if(!hasGift && giftBtn) giftBtn.style.display = "none";
+
+      // Hotspots (com override opcional do localStorage, para o editor)
+      const STORAGE_KEY = "convite-hotspots-v1";
+      const buttons = {
+        confirm: document.getElementById("confirmBtn"),
+        map: document.getElementById("mapBtn"),
+        gift: document.getElementById("giftBtn")
+      };
+      let HOTSPOTS = JSON.parse(JSON.stringify(C.hotspots));
+      try { HOTSPOTS = Object.assign({}, HOTSPOTS, JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")); } catch(e){}
+
+      function applyHotspots(){
+        Object.entries(HOTSPOTS).forEach(([key,v])=>{
+          const el = buttons[key]; if(!el) return;
+          el.style.left = v.left + "%"; el.style.top = v.top + "%";
+          el.style.width = v.width + "%"; el.style.height = v.height + "%";
+        });
+        exportAreas();
+      }
+
+      const $ = (id)=>document.getElementById(id);
+      const buildScreens = ()=>{
+        const list = ["opening"];
+        if(hasVideo) list.push("videoScreen");
+        list.push("mainScreen");
+        if(hasGift) list.push("giftScreen");
+        return list.map($);
+      };
+      const screens = buildScreens();
+      const video = $("videoPlayer");
+      const music = $("music");
+
+      function show(id){
+        screens.forEach(s=>{ if(s) s.classList.remove("active","fade-in","fade-out"); });
+        const next = $(id); if(!next) return;
+        next.classList.add("active");
+        if(id === "mainScreen") next.classList.add("fade-in");
+      }
+
+      // ---- MÚSICA (desbloqueio no toque, compatível com iPhone) ----------
+      const MUSIC_VOLUME = Math.max(0, Math.min(1, C.musica.volume || 0));
+      let musicStarted = false, musicFadeTimer = null;
+      function fadeMusicTo(target){
+        clearInterval(musicFadeTimer);
+        music.volume = Math.min(music.volume || 0.001, target);
+        musicFadeTimer = setInterval(()=>{
+          music.volume = Math.min(target, (music.volume || 0) + 0.025);
+          if(music.volume >= target) clearInterval(musicFadeTimer);
+        }, 120);
+      }
+      async function startMusic(force){
+        try{
+          music.muted = false;
+          music.volume = Math.max(music.volume || 0, 0.001);
+          music.load();
+          await music.play();
+          musicStarted = true;
+          document.body.classList.remove("need-music");
+          fadeMusicTo(MUSIC_VOLUME);
+          return true;
+        }catch(e){
+          musicStarted = false;
+          if(force || $("mainScreen").classList.contains("active")) document.body.classList.add("need-music");
+          return false;
+        }
+      }
+      function ensureMusicButton(){ if(!musicStarted || music.paused) document.body.classList.add("need-music"); }
+
+      // ---- FLUXO ENTRE TELAS ---------------------------------------------
+      function goMain(){
+        if($("mainScreen").classList.contains("active")) return;
+        if(hasVideo) video.pause();
+        if(hasVideo){
+          $("videoScreen").classList.add("fade-out");
+          setTimeout(()=>{ show("mainScreen"); startMusic(true); }, 520);
+        } else {
+          show("mainScreen"); startMusic(true);
+        }
+      }
+
+      // Toque na abertura: com vídeo -> vai pro vídeo; sem vídeo -> vai direto p/ principal.
+      $("opening").addEventListener("pointerup", async ()=>{
+        if(hasVideo){
+          show("videoScreen");
+          await startMusic(false); // desbloqueia o MP3 no mesmo toque do usuário
+          video.volume = 1;
+          try { await video.play(); } catch(e) { goMain(); ensureMusicButton(); }
+        } else {
+          await startMusic(false);
+          goMain();
+        }
+      }, {once:true});
+
+      if(hasVideo){
+        video.addEventListener("ended", goMain);
+        video.addEventListener("error", goMain);
+        $("skipBtn").addEventListener("click", goMain);
+      }
+
+      // ---- BOTÕES DA TELA PRINCIPAL --------------------------------------
+      $("confirmBtn").addEventListener("click", (e)=>{
+        if(document.body.classList.contains("editor-on")) return;
+        e.preventDefault(); e.stopPropagation();
+        const num = (C.whatsapp.numero || "").replace(/\D/g,"");
+        const msg = encodeURIComponent(C.whatsapp.mensagem || "");
+        window.open("https://wa.me/" + num + "?text=" + msg, "_blank");
+      });
+      $("mapBtn").addEventListener("click", (e)=>{
+        if(document.body.classList.contains("editor-on")) return;
+        e.preventDefault(); e.stopPropagation();
+        window.open(C.mapa || "#", "_blank");
+      });
+      if(hasGift){
+        $("giftBtn").addEventListener("click", (e)=>{
+          if(document.body.classList.contains("editor-on")) return;
+          e.preventDefault(); e.stopPropagation();
+          show("giftScreen");
+        });
+        $("backBtn").addEventListener("click", ()=> show("mainScreen"));
+      }
+      musicUnlock.addEventListener("click", ()=> startMusic(true));
+      document.addEventListener("visibilitychange", ()=>{
+        if(!document.hidden && musicStarted && music.paused) startMusic(false);
+      });
+
+      // ====================================================================
+      // EDITOR VISUAL (?editor=1) — arrasta os botões e copia p/ o config.js
+      // ====================================================================
+      applyHotspots();
+      const params = new URLSearchParams(location.search);
+      let selected = "confirm";
+
+      function openEditor(){ show("mainScreen"); document.body.classList.add("editor-on","can-edit"); selectArea(selected); }
+      function closeEditor(){ document.body.classList.remove("editor-on"); }
+      $("editOpen").addEventListener("click", openEditor);
+      $("closeEditor").addEventListener("click", closeEditor);
+      if(params.has("editor")) openEditor();
+      $("areaSelect").addEventListener("change", e=>selectArea(e.target.value));
+
+      function selectArea(key){
+        selected = key; $("areaSelect").value = key;
+        Object.values(buttons).forEach(b=>b.classList.remove("selected"));
+        if(buttons[key]) buttons[key].classList.add("selected");
+        fillInputs();
+      }
+      function fillInputs(){
+        const v = HOTSPOTS[selected] || {left:0,top:0,width:0,height:0};
+        $("inpL").value = v.left; $("inpT").value = v.top;
+        $("inpW").value = v.width; $("inpH").value = v.height;
+      }
+      ["inpL","inpT","inpW","inpH"].forEach(id=>$(id).addEventListener("input",()=>{
+        HOTSPOTS[selected] = {left:+$("inpL").value, top:+$("inpT").value, width:+$("inpW").value, height:+$("inpH").value};
+        applyHotspots();
+      }));
+
+      Object.entries(buttons).forEach(([key,el])=>{
+        if(!el) return;
+        el.innerHTML = '<span class="resize"></span>';
+        el.addEventListener("pointerdown", e=>{
+          if(!document.body.classList.contains("editor-on")) return;
+          e.preventDefault(); e.stopPropagation(); selectArea(key);
+          const stage = $("mainStage").getBoundingClientRect();
+          const start = Object.assign({x:e.clientX, y:e.clientY}, HOTSPOTS[key]);
+          const resize = e.target.classList.contains("resize");
+          el.setPointerCapture(e.pointerId);
+          function move(ev){
+            const dx = (ev.clientX-start.x)/stage.width*100;
+            const dy = (ev.clientY-start.y)/stage.height*100;
+            if(resize){
+              HOTSPOTS[key].width  = Math.max(3, Math.min(100-HOTSPOTS[key].left, start.width+dx));
+              HOTSPOTS[key].height = Math.max(3, Math.min(100-HOTSPOTS[key].top,  start.height+dy));
+            } else {
+              HOTSPOTS[key].left = Math.max(0, Math.min(100-start.width,  start.left+dx));
+              HOTSPOTS[key].top  = Math.max(0, Math.min(100-start.height, start.top+dy));
+            }
+            applyHotspots(); fillInputs();
+          }
+          function up(){ el.removeEventListener("pointermove",move); el.removeEventListener("pointerup",up); }
+          el.addEventListener("pointermove",move); el.addEventListener("pointerup",up);
+        });
+      });
+
+      $("saveAreas").addEventListener("click",()=>{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(HOTSPOTS));
+        alert("Áreas salvas neste navegador. Para deixar permanente no GitHub, copie o código e cole no config.js.");
+      });
+      $("resetAreas").addEventListener("click",()=>{
+        HOTSPOTS = JSON.parse(JSON.stringify(C.hotspots));
+        localStorage.removeItem(STORAGE_KEY);
+        applyHotspots(); fillInputs();
+      });
+      // Gera código pronto para colar dentro de CONFIG.hotspots no config.js
+      function exportAreas(){
+        const indent = "    ";
+        const lines = Object.entries(HOTSPOTS).map(([k,v])=>{
+          return indent + indent + k + ": { left:" + v.left + ", top:" + v.top + ", width:" + v.width + ", height:" + v.height + " }";
+        }).join(",\n");
+        $("exportBox").value = "hotspots: {\n" + lines + "\n  }";
+      }
+      $("copyAreas").addEventListener("click", async()=>{
+        exportAreas(); $("exportBox").select();
+        try{ await navigator.clipboard.writeText($("exportBox").value); alert("Código copiado. Cole dentro do objeto CONFIG no arquivo config.js."); }
+        catch(e){ document.execCommand("copy"); }
+      });
+    })();
+  </script>
+</body>
+</html>
