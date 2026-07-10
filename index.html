@@ -13,7 +13,7 @@
        link do repositório (URL_BASE abaixo). O resto da engine é automático.
        ==================================================================== -->
   <meta name="theme-color" content="#f6c1cd">
-  <title>Convite</title>
+  <title>Convite Maya 5 anos</title>
 
   <!-- Cole aqui a URL base do convite publicado no GitHub Pages -->
   <!-- Ex.: https://convitepremium.github.io/convite-premium-Joao/ -->
@@ -27,7 +27,7 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Convite Maya 5 anos ">
+  <meta name="twitter:title" content="Convite Maya 5 anos">
   <meta name="twitter:description" content="Clique para abrir o convite">
   <meta name="twitter:image" content="https://convitepremium.github.io/convites-premium-Maya/assets/preview-whatsapp.jpg">
   <!-- Fim do bloco de preview -->
@@ -237,9 +237,15 @@
       }
       async function startMusic(force){
         try{
+          // Se a música já estiver tocando, mantém a reprodução contínua
+          // e não chama play() novamente.
+          if(musicStarted && !music.paused){
+            document.body.classList.remove("need-music");
+            return true;
+          }
+
           music.muted = false;
           music.volume = Math.max(music.volume || 0, 0.001);
-          music.load();
           await music.play();
           musicStarted = true;
           document.body.classList.remove("need-music");
@@ -247,33 +253,85 @@
           return true;
         }catch(e){
           musicStarted = false;
-          if(force || $("mainScreen").classList.contains("active")) document.body.classList.add("need-music");
+          document.body.classList.add("need-music");
           return false;
         }
       }
-      function ensureMusicButton(){ if(!musicStarted || music.paused) document.body.classList.add("need-music"); }
+      function ensureMusicButton(){
+        if(!musicStarted || music.paused){
+          document.body.classList.add("need-music");
+        }
+      }
 
       // ---- FLUXO ENTRE TELAS ---------------------------------------------
       function goMain(){
         if($("mainScreen").classList.contains("active")) return;
         if(hasVideo) video.pause();
+
+        const openMain = ()=>{
+          show("mainScreen");
+
+          // Só tenta iniciar novamente se a música realmente estiver parada.
+          // Assim ela continua do ponto atual ao sair do vídeo.
+          if(!musicStarted || music.paused){
+            startMusic(true).then((ok)=>{
+              if(!ok) document.body.classList.add("need-music");
+            });
+          }
+        };
+
         if(hasVideo){
           $("videoScreen").classList.add("fade-out");
-          setTimeout(()=>{ show("mainScreen"); startMusic(true); }, 520);
+          setTimeout(openMain, 520);
         } else {
-          show("mainScreen"); startMusic(true);
+          openMain();
         }
       }
 
-      // Toque na abertura: com vídeo -> vai pro vídeo; sem vídeo -> vai direto p/ principal.
-      $("opening").addEventListener("pointerup", async ()=>{
+      // Toque na abertura: chama música e vídeo imediatamente no mesmo gesto.
+      // Isso aumenta a compatibilidade com Safari/iPhone.
+      $("opening").addEventListener("pointerup", ()=>{
         if(hasVideo){
           show("videoScreen");
-          await startMusic(false); // desbloqueia o MP3 no mesmo toque do usuário
           video.volume = 1;
-          try { await video.play(); } catch(e) { goMain(); ensureMusicButton(); }
+
+          music.muted = false;
+          music.volume = 0.001;
+
+          const musicPromise = music.play();
+          const videoPromise = video.play();
+
+          Promise.resolve(musicPromise)
+            .then(()=>{
+              musicStarted = true;
+              document.body.classList.remove("need-music");
+              fadeMusicTo(MUSIC_VOLUME);
+            })
+            .catch(()=>{
+              musicStarted = false;
+              document.body.classList.add("need-music");
+            });
+
+          Promise.resolve(videoPromise)
+            .catch(()=>{
+              goMain();
+              ensureMusicButton();
+            });
         } else {
-          await startMusic(false);
+          music.muted = false;
+          music.volume = 0.001;
+
+          Promise.resolve(music.play())
+            .then(()=>{
+              musicStarted = true;
+              document.body.classList.remove("need-music");
+              fadeMusicTo(MUSIC_VOLUME);
+            })
+            .catch(()=>{
+              musicStarted = false;
+              document.body.classList.add("need-music");
+            });
+
           goMain();
         }
       }, {once:true});
