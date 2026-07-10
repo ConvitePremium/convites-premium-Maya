@@ -28,14 +28,14 @@ const CONFIG = {
   //         Ex.: 55 (Brasil) + 31 (DDD) + 985657116 -> "5531985657116"
   // mensagem: texto que já vem pré-preenchido quando a pessoa abre o WhatsApp.
   whatsapp: {
-    numero: "5531985657116",
-    mensagem: "Olá! Confirmo minha presença no aniversário da Sophia."
+    numero: "5581994815258",
+    mensagem: "Olá! Confirmo minha presença no aniversário da Maya."
   },
 
   // ----- LOCALIZAÇÃO (BOTÃO MAPA) ----------------------------------------
   // Link completo do Google Maps. Abra o local no Maps, clique em "Compartilar"
   // -> "Copiar link" e cole aqui (mantenha as aspas).
-  mapa: "https://www.google.com/maps/place/Fisioeterapias+-+Clinica+de+Fisioterapia+Infantil/@-7.2301799,-39.3782927,16.5z/data=!4m6!3m5!1s0x7a183590a46bd83:0x125a4f24286c0c9f!8m2!3d-7.229732!4d-39.3778381!16s%2Fg%2F11fm9xg93_?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D",
+  mapa: "https://www.google.com/local/place/fid/0x7ab17b194233e37:0x9fd861d70d98dfdd/photosphere?iu=https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid%3D1esMHTRM4-0MvCPuxueicw%26cb_client%3Dsearch.gws-prod.gps%26yaw%3D294.368%26pitch%3D0%26thumbfov%3D100%26w%3D0%26h%3D0&ik=CAISFjFlc01IVFJNNC0wTXZDUHV4dWVpY3c%3D&sa=X&ved=2ahUKEwiDq-n438iVAxXVr5UCHWXPGOIQpx96BAgbEBI",
 
   // ----- QUAIS TELAS APARECEM --------------------------------------------
   // video:     true  -> toca o vídeo (assets/video.mp4) depois da abertura.
@@ -72,9 +72,9 @@ const CONFIG = {
   //   left/top: canto superior esquerdo do botão
   //   width/height: tamanho do botão
   hotspots: {
-      confirm: { left:15, top:83.4929833917626, width:20.5, height:11.2 },
-      map: { left:40.66898233222849, top:83.60262665317134, width:20.5, height:11.2 },
-      gift: { left:64.2017749079874, top:84.91842944571364, width:23, height:11.2 }
+        confirm: { left:15, top:83.4929833917626, width:20.88965582260389, height:15.037719105617501 },
+        map: { left:39.30515722428124, top:84.15087223968813, width:20.88967068702071, height:14.59912096329132 },
+        gift: { left:64.98108655319517, top:84.15088897081564, width:21.831017667771516, height:15.147374915371866 }
   },
 
   // ----- MÚSICA DE FUNDO -------------------------------------------------
