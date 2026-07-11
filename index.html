@@ -239,22 +239,32 @@
       }
       async function startMusic(force){
         try{
-          // Se a música já estiver tocando, mantém a reprodução contínua
-          // e não chama play() novamente.
+          // Se a música já estiver tocando, mantém a reprodução contínua.
           if(musicStarted && !music.paused){
             document.body.classList.remove("need-music");
             return true;
           }
 
           music.muted = false;
-          music.volume = Math.max(music.volume || 0, 0.001);
+          // Começa praticamente inaudível para evitar um pico de volume no iPhone
+          // antes de aplicar o volume configurado.
+          music.volume = 0.001;
           await music.play();
+
+          // Confirma que o navegador realmente iniciou a reprodução.
+          await new Promise(resolve => setTimeout(resolve, 180));
+          if(music.paused){
+            throw new Error("A reprodução da música foi bloqueada.");
+          }
+
           musicStarted = true;
           document.body.classList.remove("need-music");
           fadeMusicTo(MUSIC_VOLUME);
           return true;
         }catch(e){
           musicStarted = false;
+
+          // Só mostra o botão quando a tentativa realmente falhar.
           document.body.classList.add("need-music");
           return false;
         }
@@ -292,27 +302,22 @@
 
       // Toque na abertura: chama música e vídeo imediatamente no mesmo gesto.
       // Isso aumenta a compatibilidade com Safari/iPhone.
-      $("opening").addEventListener("pointerup", ()=>{
+      $("opening").addEventListener("click", ()=>{
+        // Começa sempre com o botão escondido.
+        // Ele só aparece quando a tentativa de tocar o MP3 realmente falhar.
+        document.body.classList.remove("need-music");
+
         if(hasVideo){
           show("videoScreen");
           video.volume = 1;
 
-          music.muted = false;
-          music.volume = 0.001;
-
-          const musicPromise = music.play();
+          // Música e vídeo são solicitados imediatamente no mesmo gesto.
+          const musicPromise = startMusic(false);
           const videoPromise = video.play();
 
-          Promise.resolve(musicPromise)
-            .then(()=>{
-              musicStarted = true;
-              document.body.classList.remove("need-music");
-              fadeMusicTo(MUSIC_VOLUME);
-            })
-            .catch(()=>{
-              musicStarted = false;
-              document.body.classList.add("need-music");
-            });
+          Promise.resolve(musicPromise).then((ok)=>{
+            if(!ok) document.body.classList.add("need-music");
+          });
 
           Promise.resolve(videoPromise)
             .catch(()=>{
@@ -320,20 +325,9 @@
               ensureMusicButton();
             });
         } else {
-          music.muted = false;
-          music.volume = 0.001;
-
-          Promise.resolve(music.play())
-            .then(()=>{
-              musicStarted = true;
-              document.body.classList.remove("need-music");
-              fadeMusicTo(MUSIC_VOLUME);
-            })
-            .catch(()=>{
-              musicStarted = false;
-              document.body.classList.add("need-music");
-            });
-
+          startMusic(false).then((ok)=>{
+            if(!ok) document.body.classList.add("need-music");
+          });
           goMain();
         }
       }, {once:true});
@@ -365,7 +359,11 @@
         });
         $("backBtn").addEventListener("click", ()=> show("mainScreen"));
       }
-      musicUnlock.addEventListener("click", ()=> startMusic(true));
+      musicUnlock.addEventListener("click", async()=>{
+        document.body.classList.remove("need-music");
+        const ok = await startMusic(true);
+        if(!ok) document.body.classList.add("need-music");
+      });
       document.addEventListener("visibilitychange", ()=>{
         if(!document.hidden && musicStarted && music.paused) startMusic(false);
       });
