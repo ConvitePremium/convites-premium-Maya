@@ -52,7 +52,7 @@
     .skip{position:absolute;top:calc(env(safe-area-inset-top) + 14px);right:14px;z-index:10;border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:10px 16px;background:rgba(255,255,255,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.45);box-shadow:0 4px 14px rgba(0,0,0,.18)}
     .loading{position:absolute;bottom:28px;left:0;right:0;text-align:center;color:#fff;text-shadow:0 2px 8px #000;font-size:14px;opacity:.85}
     .tap-btn{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:6;border:1px solid rgba(255,255,255,.72);border-radius:999px;padding:12px 22px;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-shadow:0 1px 5px rgba(0,0,0,.55);box-shadow:0 8px 22px rgba(0,0,0,.20);animation:pulse 1.8s ease-in-out infinite}
-    .music-unlock{display:none;position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);z-index:12;border:1px solid rgba(255,255,255,.65);border-radius:999px;padding:11px 18px;background:rgba(255,255,255,.20);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-size:13px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;text-shadow:0 1px 5px rgba(0,0,0,.55);box-shadow:0 8px 22px rgba(0,0,0,.22)}
+    .music-unlock{display:none;position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);z-index:12;border:1px solid rgba(255,255,255,.65);border-radius:999px;padding:11px 18px;background:rgba(255,255,255,.20);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font-size:13px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;text-shadow:0 1px 5px rgba(0,0,0,.55);box-shadow:0 8px 22px rgba(0,0,0,.22)}
     body.need-music #musicUnlock{display:block}
     .fade-out{animation:fadeOut .75s ease forwards}.fade-in{animation:fadeIn .75s ease forwards}
     @keyframes pulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.88}50%{transform:translateX(-50%) scale(1.035);opacity:1}}
@@ -101,7 +101,6 @@
         <button class="hotspot" id="confirmBtn" data-key="confirm" data-label="WhatsApp" aria-label="Confirmar presença"></button>
         <button class="hotspot" id="mapBtn" data-key="map" data-label="Localização" aria-label="Abrir localização"></button>
         <button class="hotspot" id="giftBtn" data-key="gift" data-label="Presentes" aria-label="Ver sugestões de presentes"></button>
-        <button class="music-unlock" id="musicUnlock" type="button">Ativar música</button>
       </div>
     </section>
 
@@ -110,6 +109,9 @@
       <button class="back" id="backBtn">Voltar</button>
     </section>
   </main>
+
+  <!-- Botão global: aparece também durante o vídeo quando o iPhone bloquear o MP3 -->
+  <button class="music-unlock" id="musicUnlock" type="button">Ativar música</button>
 
   <button class="edit-open" id="editOpen" type="button">Editar áreas</button>
   <div class="editor-panel" id="editorPanel">
